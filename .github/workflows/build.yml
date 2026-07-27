@@ -16,12 +16,12 @@ jobs:
     - name: Setup Node.js
       uses: actions/setup-node@v4
       with:
-        node-version: 16
+        node-version: 20
 
     - name: Setup Java JDK
       uses: actions/setup-java@v4
       with:
-        java-version: '11'
+        java-version: '17'
         distribution: 'zulu'
 
     - name: Install Cordova CLI

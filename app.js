@@ -809,7 +809,11 @@ function triggerGoalCelebration() {
       if (window.cordova && window.admob) {
         showRealAdMobInterstitial();
       } else {
-        showInterstitialAd();
+        // Se NÃO for dispositivo móvel, exibe a simulação (evita travar a tela no APK real)
+        const isMobileDevice = /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent);
+        if (!isMobileDevice) {
+          showInterstitialAd();
+        }
       }
     }, 1500);
   }

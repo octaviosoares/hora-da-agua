@@ -1,0 +1,500 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Hora da Água - Seu Lembrete de Hidratação Diária</title>
+  <!-- Google Fonts - Outfit para uma estética premium e moderna -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+  <!-- Lucide Icons para ícones modernos via CDN -->
+  <script src="https://unpkg.com/lucide@latest"></script>
+  <link rel="icon" type="image/png" href="./icon.png">
+  <link rel="stylesheet" href="./style.css">
+</head>
+<body>
+  <!-- Container principal que simula o formato de celular em telas maiores -->
+  <div class="app-container">
+    
+    <!-- ========================================== -->
+    <!-- TELA 1: CONFIGURAÇÃO INICIAL               -->
+    <!-- ========================================== -->
+    <section id="screen-setup" class="screen active">
+      <div class="setup-card">
+        <div class="logo-area">
+          <div class="droplet-icon-large animate-float">
+            <i data-lucide="droplets"></i>
+          </div>
+          <h1>Seja bem-vindo!</h1>
+          <p class="subtitle">Insira seu peso para calcular sua meta ideal de hidratação ou use a meta padrão.</p>
+        </div>
+
+        <form id="form-setup" class="setup-form" onsubmit="return false;">
+          <div class="input-group">
+            <label for="input-weight">Seu Peso (kg)</label>
+            <div class="input-wrapper">
+              <i data-lucide="scale" class="input-icon"></i>
+              <input 
+                type="number" 
+                id="input-weight" 
+                min="10" 
+                max="300" 
+                placeholder="Ex: 70" 
+                required
+                autocomplete="off"
+              >
+              <span class="unit">kg</span>
+            </div>
+            <span id="setup-error-msg" class="error-msg"></span>
+          </div>
+
+          <div class="input-group">
+            <label>Seu Gênero</label>
+            <div class="gender-selector-group">
+              <button type="button" class="btn-gender active" data-gender="masculino" id="btn-gender-masculino">
+                <i data-lucide="mars"></i>
+                <span>Masculino</span>
+              </button>
+              <button type="button" class="btn-gender" data-gender="feminino" id="btn-gender-feminino">
+                <i data-lucide="venus"></i>
+                <span>Feminino</span>
+              </button>
+            </div>
+          </div>
+
+          <button type="submit" id="btn-submit-weight" class="btn btn-primary">
+            <span>Calcular Meta e Começar</span>
+            <i data-lucide="arrow-right"></i>
+          </button>
+        </form>
+
+        <button type="button" id="btn-skip-weight" class="btn btn-text">
+          Pular e usar meta padrão (2 Litros)
+        </button>
+      </div>
+    </section>
+
+    <!-- ========================================== -->
+    <!-- TELA 2: PAINEL PRINCIPAL                   -->
+    <!-- ========================================== -->
+    <section id="screen-main" class="screen">
+      <!-- Cabeçalho -->
+      <header class="app-header">
+        <div class="header-title">
+          <span class="date-today" id="current-date">Sexta, 26 de Junho</span>
+          <h2>Hora da Água</h2>
+        </div>
+        <div class="header-actions">
+          <button id="btn-history" class="icon-btn-settings" aria-label="Histórico e Estatísticas">
+            <i data-lucide="bar-chart-2"></i>
+          </button>
+          <button id="btn-settings" class="icon-btn-settings" aria-label="Configurações">
+            <i data-lucide="settings"></i>
+          </button>
+        </div>
+      </header>
+
+      <!-- Dashboard Grid -->
+      <div class="dashboard-content">
+        <!-- Indicador de Progresso -->
+        <div class="progress-indicator">
+          <div class="percentage-badge" id="display-percentage">0%</div>
+          <div class="progress-text-container">
+            <span class="consumed-value" id="display-consumed">0 ml</span>
+            <span class="goal-value" id="display-goal">/ 2000 ml</span>
+          </div>
+        </div>
+
+        <!-- Copo de Água Gráfico Animado -->
+        <div class="glass-visualization">
+          <div class="glass-container">
+            <!-- As ondas de água animadas -->
+            <div class="water-level" id="water-fill" style="height: 0%;">
+              <svg class="water-waves" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 120 28" preserveAspectRatio="none">
+                <defs>
+                  <path id="wave" d="M-160 44c30 0 58-18 88-18s58 18 88 18 58-18 88-18 58 18 88 18 v44h-352z"/>
+                </defs>
+                <g class="parallax">
+                  <use href="#wave" x="48" y="0" class="wave-back" />
+                  <use href="#wave" x="48" y="3" class="wave-mid" />
+                  <use href="#wave" x="48" y="5" class="wave-front" />
+                </g>
+              </svg>
+            </div>
+            <!-- Brilho/Efeito de vidro -->
+            <div class="glass-glare"></div>
+          </div>
+        </div>
+
+        <!-- Botões de Ação para adicionar água -->
+        <div class="action-buttons">
+          <button id="btn-add-250" class="btn btn-action animate-press">
+            <div class="btn-icon-wrapper glass-icon">
+              <i data-lucide="cup-soda"></i>
+            </div>
+            <div class="btn-text-wrapper">
+              <span class="add-amount" id="display-btn1-ml">+ 250 ml</span>
+              <span class="add-label">Copo</span>
+            </div>
+          </button>
+
+          <button id="btn-add-500" class="btn btn-action animate-press">
+            <div class="btn-icon-wrapper bottle-icon">
+              <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" class="lucide-custom-bottle">
+                <path d="M10 2h4v3h-4z" />
+                <path d="M9 5h6c.6 0 1 .4 1 1v2c0 .9-.5 1.7-1.3 2.1L14 11v8c0 1.1-.9 2-2 2s-2-.9-2-2v-8l-.7-.9C8.5 9.7 8 8.9 8 8V6c0-.6.4-1 1-1z" />
+                <path d="M9 15h6" />
+              </svg>
+            </div>
+            <div class="btn-text-wrapper">
+              <span class="add-amount" id="display-btn2-ml">+ 500 ml</span>
+              <span class="add-label">Garrafa</span>
+            </div>
+          </button>
+        </div>
+
+        <!-- Adição Personalizada e Link de Atalhos -->
+        <div class="quick-custom-add-section">
+          <button id="btn-quick-edit-shortcuts" class="btn-text-link" style="margin-bottom: 4px;">
+            <i data-lucide="sliders"></i>
+            <span>Personalizar botões</span>
+          </button>
+          <div class="custom-input-row">
+            <input type="number" id="input-quick-custom-ml" min="50" max="3000" step="50" placeholder="ml" autocomplete="off">
+            <button id="btn-quick-custom-add" class="btn btn-primary btn-quick-add" aria-label="Adicionar volume digitado">
+              <i data-lucide="plus"></i>
+            </button>
+          </div>
+        </div>
+      </div>
+
+      <!-- Rodapé com o AdMob Banner -->
+      <footer class="app-footer">
+        <div class="admob-banner-container" id="admob-banner">
+          <div class="admob-badge">Anúncio AdMob</div>
+          <div class="admob-content">
+            <i data-lucide="sparkles" class="ad-icon"></i>
+            <div class="ad-text">
+              <span class="ad-title">Mantenha-se Saudável!</span>
+              <span class="ad-desc">Beba água regularmente para mais energia.</span>
+            </div>
+            <button class="ad-action-btn">Ver Mais</button>
+          </div>
+        </div>
+      </footer>
+    </section>
+
+    <!-- ========================================== -->
+    <!-- MODAL DE CONFIGURAÇÕES / AJUSTES           -->
+    <!-- ========================================== -->
+    <div id="modal-settings" class="modal">
+      <div class="modal-overlay" id="settings-overlay"></div>
+      <div class="modal-content">
+        <div class="modal-header">
+          <h3>Ajustes e Configurações</h3>
+          <button id="btn-close-settings" class="close-btn" aria-label="Fechar">
+            <i data-lucide="x"></i>
+          </button>
+        </div>
+        <div class="modal-body">
+          <!-- Card de Simulação Pro -->
+          <div class="settings-section pro-badge-section" id="pro-status-container">
+            <div class="pro-promo-card">
+              <div class="pro-promo-header">
+                <div class="pro-sparkle-icon"><i data-lucide="sparkles"></i></div>
+                <div class="pro-promo-title">Hora da Água Pro</div>
+              </div>
+              <p>Remova todos os anúncios, libere recipientes premium exclusivos (Copo Térmico, Garrafa Esportiva e Galão de Água) e novos sons offline para os alertas!</p>
+              <button id="btn-unlock-pro" class="btn btn-primary btn-full btn-pro-purchase animate-pulse">
+                Desbloquear Pro por R$ 9,90
+              </button>
+            </div>
+          </div>
+
+          <!-- Aparência / Tema -->
+          <div class="settings-section">
+            <h4>Aparência</h4>
+            <p class="settings-desc">Escolha o tema visual do aplicativo:</p>
+            <div class="theme-switch-group grid-theme">
+              <button id="btn-theme-dark" class="btn btn-outline btn-theme-toggle active">
+                <i data-lucide="moon"></i>
+                <span>Escuro</span>
+              </button>
+              <button id="btn-theme-light" class="btn btn-outline btn-theme-toggle">
+                <i data-lucide="sun"></i>
+                <span>Claro</span>
+              </button>
+            </div>
+          </div>
+
+          <!-- Modificar peso / meta -->
+          <div class="settings-section">
+            <h4>Meta de Hidratação</h4>
+            <div class="input-group">
+              <label for="settings-weight">Alterar Peso (kg)</label>
+              <div class="input-wrapper">
+                <i data-lucide="scale" class="input-icon"></i>
+                <input type="number" id="settings-weight" min="10" max="300" placeholder="Ex: 70">
+                <span class="unit">kg</span>
+              </div>
+            </div>
+            <div class="input-group">
+              <label>Gênero para Cálculo</label>
+              <div class="gender-selector-group">
+                <button type="button" class="btn-gender" data-gender="masculino" id="settings-gender-masculino">
+                  <i data-lucide="mars"></i>
+                  <span>Masculino</span>
+                </button>
+                <button type="button" class="btn-gender" data-gender="feminino" id="settings-gender-feminino">
+                  <i data-lucide="venus"></i>
+                  <span>Feminino</span>
+                </button>
+              </div>
+            </div>
+            <button id="btn-recalculate-meta" class="btn btn-secondary btn-full">
+              Recalcular Meta Diária
+            </button>
+            <div class="meta-manual-group">
+              <label for="settings-manual-meta">Ou defina uma Meta Manual (ml)</label>
+              <div class="input-wrapper">
+                <i data-lucide="target" class="input-icon"></i>
+                <input type="number" id="settings-manual-meta" min="500" max="10000" step="50" placeholder="Ex: 2000">
+                <span class="unit">ml</span>
+              </div>
+            </div>
+            <button id="btn-save-manual-meta" class="btn btn-primary btn-full">
+              Salvar Nova Meta
+            </button>
+
+            <!-- Meta Inteligente (Ajustes Diários) -->
+            <div class="smart-meta-group">
+              <label class="section-sub-label">Ajustes Rápidos de Hoje</label>
+              <div class="toggle-control-row">
+                <div class="toggle-info">
+                  <span class="toggle-title">🏋️ Pratiquei Exercícios</span>
+                  <span class="toggle-desc">Adiciona 500 ml à meta de hoje</span>
+                </div>
+                <label class="switch">
+                  <input type="checkbox" id="switch-exercise">
+                  <span class="slider round"></span>
+                </label>
+              </div>
+              <div class="toggle-control-row">
+                <div class="toggle-info">
+                  <span class="toggle-title">🔥 Clima Muito Quente</span>
+                  <span class="toggle-desc">Adiciona 300 ml à meta de hoje</span>
+                </div>
+                <label class="switch">
+                  <input type="checkbox" id="switch-weather">
+                  <span class="slider round"></span>
+                </label>
+              </div>
+            </div>
+          </div>
+
+          <!-- Personalizar Medidas -->
+          <div class="settings-section">
+            <h4>Atalhos Rápidos (ml)</h4>
+            <p class="settings-desc">Personalize o volume adicionado em cada botão atalho:</p>
+            <div class="shortcut-inputs-group">
+              <div class="input-group-half">
+                <label for="settings-btn1-val">Botão 1 (Volume)</label>
+                <div class="input-wrapper-simple">
+                  <input type="number" id="settings-btn1-val" min="50" max="2000" step="50" placeholder="Ex: 250">
+                  <span class="unit">ml</span>
+                </div>
+                <label for="settings-btn1-model" class="model-select-label">Recipiente</label>
+                <select id="settings-btn1-model" class="select-styled-compact">
+                  <option value="copo">🥛 Copo Padrão</option>
+                  <option value="garrafa">🧴 Garrafa Padrão</option>
+                </select>
+              </div>
+              <div class="input-group-half">
+                <label for="settings-btn2-val">Botão 2 (Volume)</label>
+                <div class="input-wrapper-simple">
+                  <input type="number" id="settings-btn2-val" min="50" max="2000" step="50" placeholder="Ex: 500">
+                  <span class="unit">ml</span>
+                </div>
+                <label for="settings-btn2-model" class="model-select-label">Recipiente</label>
+                <select id="settings-btn2-model" class="select-styled-compact">
+                  <option value="copo">🥛 Copo Padrão</option>
+                  <option value="garrafa" selected>🧴 Garrafa Padrão</option>
+                </select>
+              </div>
+            </div>
+            <button id="btn-save-shortcuts" class="btn btn-primary btn-full">
+              Salvar Novos Atalhos
+            </button>
+          </div>
+
+          <!-- Ações rápidas de dados -->
+          <div class="settings-section">
+            <h4>Gerenciamento de Dados</h4>
+            <button id="btn-reset-today" class="btn btn-outline btn-full text-danger">
+              <i data-lucide="rotate-ccw"></i>
+              Zerar consumo de hoje
+            </button>
+            <button id="btn-reset-all" class="btn btn-outline btn-full text-danger">
+              <i data-lucide="trash-2"></i>
+              Redefinir aplicativo (voltar ao início)
+            </button>
+          </div>
+
+          <!-- Lembretes e Frequência -->
+          <div class="settings-section">
+            <h4>Lembretes de Hidratação</h4>
+            <p class="settings-desc">Configure a frequência dos alertas periódicos para beber água:</p>
+            
+            <div class="input-group">
+              <label for="settings-interval">Frequência</label>
+              <div class="input-wrapper">
+                <i data-lucide="clock" class="input-icon"></i>
+                <select id="settings-interval" class="select-styled">
+                  <option value="disabled">🔕 Desativado</option>
+                  <option value="30">⏱️ A cada 30 minutos</option>
+                  <option value="60">⏱️ A cada 1 hora</option>
+                  <option value="120" selected>⏱️ A cada 2 horas</option>
+                  <option value="180">⏱️ A cada 3 horas</option>
+                  <option value="custom">⚙️ Outro intervalo...</option>
+                </select>
+              </div>
+            </div>
+
+            <div class="input-group">
+              <label for="settings-sound">Som do Lembrete</label>
+              <div class="input-wrapper">
+                <i data-lucide="volume-2" class="input-icon"></i>
+                <select id="settings-sound" class="select-styled">
+                  <option value="gota" selected>💧 Gota d'Água</option>
+                </select>
+              </div>
+            </div>
+
+            <div id="custom-interval-wrapper" class="input-group hidden">
+              <label for="settings-custom-interval-mins">Definir Intervalo (minutos)</label>
+              <div class="input-wrapper">
+                <i data-lucide="timer" class="input-icon"></i>
+                <input type="number" id="settings-custom-interval-mins" min="5" max="1440" placeholder="Ex: 45">
+                <span class="unit">min</span>
+              </div>
+            </div>
+
+            <button id="btn-save-interval" class="btn btn-primary btn-full">
+              Salvar Configuração de Lembrete
+            </button>
+
+            <div class="reminder-countdown" id="display-reminder-countdown">
+              Lembretes desativados
+            </div>
+            
+            <button id="btn-simulate-notification" class="btn btn-outline btn-full btn-simulate">
+              <i data-lucide="bell"></i>
+              Simular Lembrete Agora
+            </button>
+            <div id="notification-status" class="notification-status-text"></div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ========================================== -->
+    <!-- INTERSTITIAL AD (ANÚNCIO EM TELA CHEIA)     -->
+    <!-- ========================================== -->
+    <div id="admob-interstitial" class="modal interstitial-modal">
+      <div class="interstitial-content">
+        <div class="interstitial-header">
+          <div class="interstitial-badge">Anúncio AdMob Interstitial</div>
+          <button id="btn-close-interstitial" class="interstitial-close-btn" disabled>
+            <span id="interstitial-timer">5s</span>
+            <i data-lucide="x" class="hidden"></i>
+          </button>
+        </div>
+        <div class="interstitial-body">
+          <div class="ad-visual-container">
+            <i data-lucide="award" class="ad-trophy-icon animate-pulse"></i>
+            <h2>PARABÉNS!</h2>
+            <p>Você atingiu sua meta diária de hidratação!</p>
+          </div>
+          <div class="ad-promotion">
+            <h3>Hora da Água Pro</h3>
+            <p>Remova anúncios, desbloqueie novos copos, widgets exclusivos e muito mais!</p>
+            <button class="btn btn-primary animate-pulse">Desbloquear Premium por R$ 4,90</button>
+          </div>
+        </div>
+        <div class="interstitial-footer">
+          <p>Patrocinado por Hora da Água Co.</p>
+        </div>
+      </div>
+    </div>
+
+    <!-- ========================================== -->
+    <!-- DIÁLOGO DE ALERTA DE BEBER ÁGUA (IN-APP)   -->
+    <!-- ========================================== -->
+    <div id="modal-reminder-alert" class="modal reminder-alert-modal">
+      <div class="reminder-alert-content">
+        <div class="reminder-alert-icon-wrapper animate-pulse">
+          <i data-lucide="bell" class="bell-alert-icon"></i>
+        </div>
+        <h3>Hora de Beber Água! 💧</h3>
+        <p>Seu corpo precisa de hidratação agora. Que tal registrar um copo d'água para continuar no ritmo?</p>
+        <button id="btn-close-reminder-alert" class="btn btn-primary btn-full">
+          Entendido, vou beber!
+        </button>
+      </div>
+    </div>
+
+    <!-- ========================================== -->
+    <!-- DIÁLOGO DE HISTÓRICO E ESTATÍSTICAS (MODAL)-->
+    <!-- ========================================== -->
+    <div id="modal-history" class="modal">
+      <div class="modal-overlay" id="history-overlay"></div>
+      <div class="modal-content history-modal-content">
+        <div class="modal-header">
+          <h3>Estatísticas e Histórico</h3>
+          <button id="btn-close-history" class="close-btn" aria-label="Fechar">
+            <i data-lucide="x"></i>
+          </button>
+        </div>
+        <div class="modal-body">
+          <!-- Cartões de Estatísticas -->
+          <div class="stats-cards-grid">
+            <div class="stats-card">
+              <span class="stats-label">Média Diária</span>
+              <span class="stats-value" id="stats-average">0 ml</span>
+            </div>
+            <div class="stats-card">
+              <span class="stats-label">Meta Batida</span>
+              <span class="stats-value" id="stats-completed">0 dias</span>
+            </div>
+            <div class="stats-card">
+              <span class="stats-label">Foco Ativo</span>
+              <span class="stats-value" id="stats-streak">0 dias</span>
+            </div>
+          </div>
+          
+          <!-- Gráfico de Barras Vertical -->
+          <div class="history-chart-section">
+            <h4>Consumo nos últimos 7 dias</h4>
+            <div class="chart-container" id="chart-bars-wrapper">
+              <!-- As barras serão injetadas via JavaScript -->
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ========================================== -->
+    <!-- TOAST NOTIFICATION EM APP                  -->
+    <!-- ========================================== -->
+    <div id="toast-container" class="toast-container"></div>
+    
+    <!-- ========================================== -->
+    <!-- CELEBRAÇÃO / CONFETI DE CONQUISTA          -->
+    <!-- ========================================== -->
+    <div id="celebration-canvas-container" class="celebration-canvas-container"></div>
+  </div>
+
+  <script src="./app.js"></script>
+</body>
+</html>

@@ -24,6 +24,14 @@ jobs:
         java-version: '17'
         distribution: 'zulu'
 
+    - name: Prepare Cordova Folder Structure
+      run: |
+        mkdir -p www
+        cp index.html www/
+        cp app.js www/
+        cp style.css www/
+        cp icon.png www/
+
     - name: Install Cordova CLI
       run: npm install -g cordova
 

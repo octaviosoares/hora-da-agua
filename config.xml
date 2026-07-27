@@ -1,5 +1,5 @@
 <?xml version='1.0' encoding='utf-8'?>
-<widget id="com.antigravity.horadaaguafree" version="1.0.0" xmlns="http://www.w3.org/ns/widgets" xmlns:cdv="http://cordova.apache.org/ns/1.0">
+<widget id="com.antigravity.horadaagua" version="1.0.0" xmlns="http://www.w3.org/ns/widgets" xmlns:cdv="http://cordova.apache.org/ns/1.0">
     <name>Hora da Agua</name>
     <description>Aplicativo para controle de hidratação diária.</description>
     <author email="suporte@horadaagua.com" href="http://horadaagua.com">
@@ -21,9 +21,11 @@
         <preference name="KeepRunning" value="true" />
         <icon src="icon.png" />
     </platform>
+    <preference name="AndroidXEnabled" value="true" />
     <plugin name="cordova-plugin-device" />
     <plugin name="cordova-plugin-badge" />
     <plugin name="cordova-plugin-local-notification" />
+    <plugin name="cordova-plugin-androidx-adapter" />
     <plugin name="cordova-plugin-admob-free">
         <variable name="ADMOB_APP_ID" value="ca-app-pub-5547281029987620~5727246611" />
     </plugin>
